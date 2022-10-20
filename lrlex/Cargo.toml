@@ -16,6 +16,7 @@ name = "lrlex"
 [lib]
 name = "lrlex"
 path = "src/lib/mod.rs"
+crate-type = ["cdylib", "rlib"]
 
 [build-dependencies]
 vergen = { version = "7", default-features = false, features = ["build"] }

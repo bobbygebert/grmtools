@@ -12,6 +12,7 @@ categories = ["parsing"]
 [lib]
 name = "lrtable"
 path = "src/lib/mod.rs"
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 fnv = "1.0"
