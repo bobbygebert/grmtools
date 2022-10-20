@@ -3,11 +3,11 @@ use std::{
     collections::HashSet,
     fmt::Debug,
     hash::{Hash, Hasher},
-    time::Instant,
 };
 
 use cactus::Cactus;
 use cfgrammar::{Span, TIdx};
+use instant::Instant;
 use lrtable::{Action, StIdx};
 use num_traits::{AsPrimitive, PrimInt, Unsigned};
 

@@ -3,12 +3,12 @@ use std::{
     fmt::{self, Debug, Display, Write as _},
     hash::Hash,
     marker::PhantomData,
-    time::{Duration, Instant},
     vec,
 };
 
 use cactus::Cactus;
 use cfgrammar::{yacc::YaccGrammar, RIdx, Span, TIdx};
+use instant::{Duration, Instant};
 use lrtable::{Action, StIdx, StateTable};
 use num_traits::{AsPrimitive, PrimInt, Unsigned};
 use serde::{Deserialize, Serialize};
