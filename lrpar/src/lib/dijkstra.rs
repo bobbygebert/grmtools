@@ -16,13 +16,13 @@ use indexmap::{
 /// heuristic and it also filters out some duplicates.
 pub(crate) fn dijkstra<N, FM, FN, FS>(
     start_node: N,
-    neighbours: FN,
+    mut neighbours: FN,
     merge: FM,
     success: FS,
 ) -> Vec<N>
 where
     N: Debug + Clone + Hash + Eq + PartialEq,
-    FN: Fn(bool, &N, &mut Vec<(u16, N)>) -> bool,
+    FN: FnMut(bool, &N, &mut Vec<(u16, N)>) -> bool,
     FM: Fn(&mut N, N),
     FS: Fn(&N) -> bool,
 {

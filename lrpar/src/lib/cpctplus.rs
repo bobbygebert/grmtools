@@ -7,7 +7,6 @@ use std::{
 
 use cactus::Cactus;
 use cfgrammar::{Span, TIdx};
-use instant::Instant;
 use lrtable::{Action, StIdx};
 use num_traits::{AsPrimitive, PrimInt, Unsigned};
 
@@ -141,7 +140,7 @@ where
 {
     fn recover(
         &self,
-        finish_by: Instant,
+        finish_by: &mut usize,
         parser: &Parser<LexemeT, StorageT, ActionT, ParamT>,
         in_laidx: usize,
         in_pstack: &mut Vec<StIdx<StorageT>>,
@@ -180,9 +179,10 @@ where
             |explore_all, n, nbrs| {
                 // Calculate n's neighbours.
 
-                if Instant::now() >= finish_by {
+                if *finish_by == 0 {
                     return false;
                 }
+                *finish_by -= 1;
 
                 match n.last_repair() {
                     Some(Repair::Delete) => {
@@ -557,7 +557,7 @@ fn rank_cnds<
     ParamT: Copy,
 >(
     parser: &Parser<LexemeT, StorageT, ActionT, ParamT>,
-    finish_by: Instant,
+    finish_by: &mut usize,
     in_laidx: usize,
     in_pstack: &[StIdx<StorageT>],
     in_cnds: Vec<Vec<Vec<ParseRepair<LexemeT, StorageT>>>>,
@@ -568,9 +568,10 @@ where
     let mut cnds = Vec::new();
     let mut furthest = 0;
     for rpr_seqs in in_cnds {
-        if Instant::now() >= finish_by {
+        if *finish_by == 0 {
             return vec![];
         }
+        *finish_by -= 1;
         let mut pstack = in_pstack.to_owned();
         let mut laidx = apply_repairs(
             parser,

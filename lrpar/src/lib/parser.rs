@@ -8,7 +8,6 @@ use std::{
 
 use cactus::Cactus;
 use cfgrammar::{yacc::YaccGrammar, RIdx, Span, TIdx};
-use instant::{Duration, Instant};
 use lrtable::{Action, StIdx, StateTable};
 use num_traits::{AsPrimitive, PrimInt, Unsigned};
 use serde::{Deserialize, Serialize};
@@ -281,7 +280,7 @@ where
         spans: &mut Vec<Span>,
     ) -> Option<ActionT> {
         let mut recoverer = None;
-        let mut recovery_budget = Duration::from_millis(RECOVERY_TIME_BUDGET);
+        let mut recovery_budget = 100_000_000;
         loop {
             debug_assert_eq!(astack.len(), spans.len());
             let stidx = *pstack.last().unwrap();
@@ -350,17 +349,11 @@ where
                         });
                     }
 
-                    let before = Instant::now();
-                    let finish_by = before + recovery_budget;
                     let (new_laidx, repairs) = recoverer
                         .as_ref()
                         .unwrap()
                         .as_ref()
-                        .recover(finish_by, self, laidx, pstack, astack, spans);
-                    let after = Instant::now();
-                    recovery_budget = recovery_budget
-                        .checked_sub(after - before)
-                        .unwrap_or_else(|| Duration::new(0, 0));
+                        .recover(&mut recovery_budget, self, laidx, pstack, astack, spans);
                     let keep_going = !repairs.is_empty();
                     let la_lexeme = self.next_lexeme(laidx);
                     errors.push(
@@ -582,7 +575,7 @@ pub(super) trait Recoverer<
 {
     fn recover(
         &self,
-        finish_by: Instant,
+        finish_by: &mut usize,
         parser: &Parser<LexemeT, StorageT, ActionT, ParamT>,
         in_laidx: usize,
         in_pstack: &mut PStack<StorageT>,
