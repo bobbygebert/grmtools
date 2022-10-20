@@ -18,6 +18,10 @@ path = "src/lib/mod.rs"
 [build-dependencies]
 vergen = { version = "7", default-features = false, features = ["build"] }
 
+[features]
+stdweb = [ "instant/stdweb" ]
+wasm-bindgen = [ "instant/wasm-bindgen" ]
+
 [dependencies]
 bincode = "1.2"
 cactus = "1.0"
