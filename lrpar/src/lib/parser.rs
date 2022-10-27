@@ -280,7 +280,7 @@ where
         spans: &mut Vec<Span>,
     ) -> Option<ActionT> {
         let mut recoverer = None;
-        let mut recovery_budget = 100_000_000;
+        let mut recovery_budget = 100_000;
         loop {
             debug_assert_eq!(astack.len(), spans.len());
             let stidx = *pstack.last().unwrap();
@@ -349,11 +349,14 @@ where
                         });
                     }
 
-                    let (new_laidx, repairs) = recoverer
-                        .as_ref()
-                        .unwrap()
-                        .as_ref()
-                        .recover(&mut recovery_budget, self, laidx, pstack, astack, spans);
+                    let (new_laidx, repairs) = recoverer.as_ref().unwrap().as_ref().recover(
+                        &mut recovery_budget,
+                        self,
+                        laidx,
+                        pstack,
+                        astack,
+                        spans,
+                    );
                     let keep_going = !repairs.is_empty();
                     let la_lexeme = self.next_lexeme(laidx);
                     errors.push(
